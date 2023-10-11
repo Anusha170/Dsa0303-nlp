@@ -1,0 +1,8 @@
+import nltk
+nltk.download('punkt')
+
+from nltk.tokenize import word_tokenize
+text = "Tokenization is the process of breaking a text into individual units, typically words or sentences."
+tokens = word_tokenize(text)
+for token in tokens:
+    print(token)
