@@ -1,0 +1,22 @@
+import nltk
+from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk import pos_tag, ne_chunk
+nltk.download('punkt')
+nltk.download('maxent_ne_chunker')
+nltk.download('words')
+text = "Apple is looking at buying U.K. startup for $1 billion. New York is a great city."
+words = word_tokenize(text)
+sentences = sent_tokenize(text)
+pos_tags = pos_tag(words)
+named_entities = ne_chunk(pos_tags)
+print("Tokens:")
+print(words)
+
+print("\nSentences:")
+print(sentences)
+
+print("\nPart-of-speech tagging:")
+print(pos_tags)
+
+print("\nNamed entities:")
+print(named_entities)
