@@ -1,0 +1,11 @@
+import nltk
+nltk.download('maxent_ne_chunker')
+nltk.download('words')
+text = "Barack Obama was born in Hawaii. He served as the President of the United States."
+words = nltk.word_tokenize(text)
+entities = nltk.ne_chunk(nltk.pos_tag(words))
+for entity in entities:
+    if isinstance(entity, nltk.Tree):
+        entity_label = entity.label()
+        entity_words = " ".join([word for word, tag in entity.leaves()])
+        print(f"Entity: {entity_words}, Label: {entity_label}")
