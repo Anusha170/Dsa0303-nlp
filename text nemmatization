@@ -1,0 +1,29 @@
+import nltk
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+text = "The cats are playing in the garden."
+words = word_tokenize(text)
+lemmatizer = WordNetLemmatizer()
+def get_wordnet_pos(treebank_tag):
+    if treebank_tag.startswith('J'):
+        return wordnet.ADJ
+    elif treebank_tag.startswith('V'):
+        return wordnet.VERB
+    elif treebank_tag.startswith('N'):
+        return wordnet.NOUN
+    elif treebank_tag.startswith('R'):
+        return wordnet.ADV
+    else:
+        return wordnet.NOUN  # Default to noun
+pos_tags = nltk.pos_tag(words)
+lemmatized_words = [lemmatizer.lemmatize(word, get_wordnet_pos(pos)) for word, pos in pos_tags]
+lemmatized_text = ' '.join(lemmatized_words)
+
+print("Original Text:")
+print(text)
+print("\nText after Lemmatization:")
+print(lemmatized_text)
