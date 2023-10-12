@@ -1,0 +1,9 @@
+import nltk
+nltk.download('punkt')
+text = "This is the first sentence. This is the second sentence. And here is the third sentence."
+sentences = nltk.sent_tokenize(text)
+for sentence in sentences:
+    words = nltk.word_tokenize(sentence)
+    print("Sentence:", sentence)
+    print("Tokens:", words)
+    print()
