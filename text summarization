@@ -1,0 +1,77 @@
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.probability import FreqDist
+from nltk.cluster.util import cosine_distance
+
+# Sample text for summarization
+text = """
+Natural language processing (NLP) is a field of computer science that focuses on the interaction
+between computers and humans through natural language. The ultimate objective of NLP is to read,
+interpret, understand, and make sense of human language in a way that is valuable.
+NLP applications include language translation, sentiment analysis, chatbots, and text summarization.
+Text summarization is the process of reducing a text to a shorter version while retaining the
+most important information.
+
+There are two main approaches to text summarization: extractive and abstractive summarization.
+Extractive summarization involves selecting a subset of sentences from the original text, whereas
+abstractive summarization generates new sentences that convey the main ideas.
+
+In this example, we will focus on extractive summarization using the NLTK library.
+"""
+
+# Tokenize the text into sentences and words
+sentences = sent_tokenize(text)
+words = word_tokenize(text)
+
+# Create a list of stopwords
+stop_words = set(stopwords.words('english'))
+
+# Calculate word frequencies
+word_frequencies = FreqDist(word.lower() for word in words if word.isalnum() and word.lower() not in stop_words)
+
+# Calculate sentence scores based on word frequencies
+sentence_scores = {}
+for sentence in sentences:
+    for word in word_tokenize(sentence):
+        if word.lower() in word_frequencies:
+            if sentence not in sentence_scores:
+                sentence_scores[sentence] = word_frequencies[word.lower()]
+            else:
+                sentence_scores[sentence] += word_frequencies[word.lower()]
+
+# Get the total maximum sentence score
+max_score = max(sentence_scores.values())
+
+# Normalize the sentence scores
+for sentence in sentence_scores:
+    sentence_scores[sentence] /= max_score
+
+# Define a function to calculate cosine similarity between two vectors
+def cosine_similarity(vector1, vector2):
+    dot_product = sum(vector1[i] * vector2[i] for i in range(len(vector1)))
+    magnitude1 = sum(vector1[i] ** 2 for i in range(len(vector1)) ** 0.5)
+    magnitude2 = sum(vector2[i] ** 2 for i in range(len(vector2)) ** 0.5)
+    if magnitude1 == 0 or magnitude2 == 0:
+        return 0
+    return dot_product / (magnitude1 * magnitude2)
+
+# Create a similarity matrix between sentences based on cosine similarity
+similarity_matrix = [[cosine_similarity(word_tokenize(sent1), word_tokenize(sent2)) for sent2 in sentences] for sent1 in sentences]
+
+# Apply the PageRank algorithm to rank sentences
+from networkx import nx
+import numpy as np
+
+nx_graph = nx.from_numpy_array(np.array(similarity_matrix))
+scores = nx.pagerank(nx_graph)
+
+# Get the top N sentences based on their scores
+num_sentences = 3  # You can adjust this to control the summary length
+selected_sentences = sorted(((scores[i], sentence) for i, sentence in enumerate(sentences)), reverse=True)[:num_sentences]
+
+# Generate the summary
+summary = ' '.join(sentence for score, sentence in selected_sentences)
+
+# Print the summary
+print(summary)
