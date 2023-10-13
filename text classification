@@ -1,0 +1,31 @@
+import nltk
+import random
+from nltk.corpus import movie_reviews
+from nltk import FreqDist
+from nltk.classify import NaiveBayesClassifier
+from nltk.classify.util import accuracy
+nltk.download("movie_reviews")
+documents = [(list(movie_reviews.words(fileid)), category)
+             for category in movie_reviews.categories()
+             for fileid in movie_reviews.fileids(category)]
+random.shuffle(documents)
+all_words = [word.lower() for word in movie_reviews.words()]
+word_features = FreqDist(all_words)
+word_features = list(word_features.keys())[:2000]
+def document_features(document):
+    document_words = set(document)
+    features = {}
+    for word in word_features:
+        features[f'contains({word})'] = (word in document_words)
+    return features
+featuresets = [(document_features(doc), category) for (doc, category) in documents]
+split_ratio = 0.8
+split_index = int(len(featuresets) * split_ratio)
+train_set, test_set = featuresets[:split_index], featuresets[split_index:]
+classifier = NaiveBayesClassifier.train(train_set)
+accuracy_score = accuracy(classifier, test_set)
+print("Accuracy:", accuracy_score)
+new_document = "This is a great movie. I loved it!"
+new_features = document_features(new_document.split())
+classification = classifier.classify(new_features)
+print("Classification:", classification)
