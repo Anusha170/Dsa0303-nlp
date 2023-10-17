@@ -1,0 +1,27 @@
+import nltk
+from nltk.tbl import feature
+corpus = [
+    ("I", "PRP", "B-NP"),
+    ("am", "VBP", "B-VP"),
+    ("running", "VBG", "I-VP"),
+    ("in", "IN", "B-PP"),
+    ("the", "DT", "B-NP"),
+    ("park", "NN", "I-NP"),
+]
+
+def apply_transformation_rules(sentence):
+    new_tags = []
+
+    for i in range(len(sentence)):
+        word, pos, label = sentence[i]
+        if word.endswith("ing"):
+            new_tags.append((word, "VBG", "I-VP"))
+        else:
+            new_tags.append((word, pos, label))
+
+    return new_tags
+transformed_corpus = [apply_transformation_rules(sentence) for sentence in [corpus]]
+
+for sentence in transformed_corpus:
+    for word, pos, label in sentence:
+        print(word, pos, label)
