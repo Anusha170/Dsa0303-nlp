@@ -1,0 +1,47 @@
+
+grammar = {
+    "S": [["NP", "VP"]],
+    "NP": [["Det", "N"]],
+    "VP": [["V"]],
+    "Det": ["the", "a"],
+    "N": ["dog", "cat"],
+    "V": ["chased", "ate"],
+}
+
+def parse(input_text, start_symbol, grammar):
+    words = input_text.split()
+    index = 0
+
+    def parse_symbol(symbol):
+        nonlocal index
+
+        if symbol in grammar:
+            for production in grammar[symbol]:
+                for part in production:
+                    if isinstance(part, list):
+                        result = parse_symbol(part)
+                        if result:
+                            continue
+                    elif part == words[index]:
+                        index += 1
+                    else:
+                        return False
+                return True
+            return False
+        elif symbol == words[index]:
+            index += 1
+            return True
+        else:
+            return False
+
+    if parse_symbol(start_symbol) and index == len(words):
+        return True
+    else:
+        return False
+input_text = "the dog chased a cat"
+start_symbol = "S"
+
+if parse(input_text, start_symbol, grammar):
+    print("Parsing successful!")
+else:
+    print("Parsing failed.")
