@@ -1,0 +1,44 @@
+def parse_E(tokens):
+    left_operand, tokens = parse_T(tokens)
+    if tokens and tokens[0] in ['+', '-']:
+        operator = tokens[0]
+        tokens = tokens[1:]
+        right_operand, tokens = parse_E(tokens)
+        return f"({left_operand} {operator} {right_operand})", tokens
+    return left_operand, tokens
+
+def parse_T(tokens):
+    left_operand, tokens = parse_F(tokens)
+    if tokens and tokens[0] in ['*', '/']:
+        operator = tokens[0]
+        tokens = tokens[1:]
+        right_operand, tokens = parse_T(tokens)
+        return f"({left_operand} {operator} {right_operand})", tokens
+    return left_operand, tokens
+
+def parse_F(tokens):
+    if tokens and tokens[0] == '(':
+        tokens = tokens[1:]
+        expression, tokens = parse_E(tokens)
+        if tokens and tokens[0] == ')':
+            tokens = tokens[1:]
+            return f"({expression})", tokens
+    elif tokens and tokens[0].isdigit():
+        num = tokens[0]
+        tokens = tokens[1:]
+        return num, tokens
+    raise ValueError("Invalid expression")
+
+def parse(expression):
+    tokens = expression.split()
+    result, remaining_tokens = parse_E(tokens)
+    if not remaining_tokens:
+        return result
+    else:
+        raise ValueError("Invalid expression")
+expression = "3 + 4 * ( 5 - 2 )"
+try:
+    parsed_expression = parse(expression)
+    print("Parsed expression:", parsed_expression)
+except ValueError as e:
+    print("Error:", e)
