@@ -1,0 +1,28 @@
+import re
+patterns = [
+    (r'\b(?:is|am|are)\b', 'VERB'),
+    (r'\b(?:the|a|an)\b', 'DET'), 
+    (r'\b(?:cat|dog|horse)\b', 'NOUN'),  
+    (r'\b(?:quick|lazy|brown)\b', 'ADJ'),  
+    (r'\b(?:over|on|in|under)\b', 'PREP'),  
+    (r'\b(?:jumped|ran|walked)\b', 'VERB'),  
+]
+
+def pos_tag(text):
+    tagged_text = []
+    words = text.split()
+    
+    for word in words:
+        for pattern, pos_tag in patterns:
+            if re.search(pattern, word, re.IGNORECASE):
+                tagged_text.append((word, pos_tag))
+                break
+        else:
+            tagged_text.append((word, 'NOUN')) 
+    
+    return tagged_text
+text = "The quick brown dog jumped over the lazy cat."
+tagged_text = pos_tag(text)
+
+for word, pos in tagged_text:
+    print(f"{word}: {pos}")
