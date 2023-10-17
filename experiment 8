@@ -1,0 +1,89 @@
+import nltk
+import random
+
+# Sample text
+text = "This is a simple example sentence for POS tagging."
+
+# Tokenize the text into words
+words = nltk.word_tokenize(text)
+
+# Define a list of possible POS tags
+pos_tags = ['Noun', 'Verb', 'Adjective', 'Adverb', 'Determiner', 'Preposition']
+
+# Create a transition matrix (a simple example)
+transition_matrix = {
+    'Start': {
+        'Noun': 0.4,
+        'Verb': 0.3,
+        'Adjective': 0.1,
+        'Adverb': 0.05,
+        'Determiner': 0.1,
+        'Preposition': 0.05,
+    },
+    'Noun': {
+        'Noun': 0.2,
+        'Verb': 0.4,
+        'Adjective': 0.1,
+        'Adverb': 0.05,
+        'Determiner': 0.2,
+        'Preposition': 0.05,
+    },
+    'Verb': {
+        'Noun': 0.3,
+        'Verb': 0.2,
+        'Adjective': 0.1,
+        'Adverb': 0.2,
+        'Determiner': 0.1,
+        'Preposition': 0.1,
+    },
+    'Adjective': {
+        'Noun': 0.3,
+        'Verb': 0.3,
+        'Adjective': 0.1,
+        'Adverb': 0.1,
+        'Determiner': 0.1,
+        'Preposition': 0.1,
+    },
+    'Adverb': {
+        'Noun': 0.2,
+        'Verb': 0.2,
+        'Adjective': 0.2,
+        'Adverb': 0.2,
+        'Determiner': 0.1,
+        'Preposition': 0.1,
+    },
+    'Determiner': {
+        'Noun': 0.3,
+        'Verb': 0.2,
+        'Adjective': 0.1,
+        'Adverb': 0.1,
+        'Determiner': 0.2,
+        'Preposition': 0.1,
+    },
+    'Preposition': {
+        'Noun': 0.2,
+        'Verb': 0.2,
+        'Adjective': 0.2,
+        'Adverb': 0.1,
+        'Determiner': 0.1,
+        'Preposition': 0.2,
+    },
+}
+
+# Initialize the list of POS tags
+tagged_words = []
+
+# Start with the 'Start' state
+current_state = 'Start'
+
+# Assign POS tags to each word
+for word in words:
+    next_state = random.choices(pos_tags, weights=transition_matrix[current_state].values())[0]
+    tagged_words.append((word, next_state))
+    current_state = next_state
+
+# Print the tagged words
+for word, pos_tag in tagged_words:
+    print(f"{word} ({pos_tag})", end=" ")
+
+print()
